@@ -1,0 +1,60 @@
+{% extends 'base/main.html' %}
+{% load static %}
+{% block content %}
+<main>
+    <section id="form-container">
+
+        <img id="logo" src="{% static 'images/chat-icon.png' %}"/>
+
+        <div id="welcome-message">
+            <h1>Welcome to MyChat</h1>
+            <p>A group video calling platform made just for you!</p>
+        </div>
+
+        <form id="form">
+            <div class="form-field">
+                <label>Room</label>
+                <input type="text" name="room" placeholder="Enter room name..."/>
+            </div>
+
+            <div class="form-field">
+                <label>Name</label>
+                <input type="text" name="name" placeholder="Enter username..."/>
+            </div>
+ 
+            <div class="form-field">
+                <input type="submit"  value="Join Room">
+            </div>
+        </form>
+    </section>
+</main>
+<script type="text/javascript">
+    
+    let form = document.getElementById('form')
+
+    let handleSubmit = async (e) => {
+        e.preventDefault()
+        let room = e.target.room.value.toUpperCase()
+        let name = e.target.name.value
+        console.log(room)
+        fetch(`/get_token/?channel=${room}`)
+            .then(response=>{
+                return response.json()
+            })
+            .then(data=>{
+                console.log(data)
+                window.sessionStorage.setItem('UID', data.uid)
+                window.sessionStorage.setItem('token', data.token)
+                window.sessionStorage.setItem('room', room)
+                window.sessionStorage.setItem('name', name)
+            })
+            .catch(error=>{
+                console.log(error)
+            })
+
+        window.open('/room/', '_self')
+    }
+
+    form.addEventListener('submit', handleSubmit)
+</script>
+{% endblock content %}
